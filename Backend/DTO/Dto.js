@@ -12,7 +12,7 @@ const userResponse = (data) => {
 const technicienResponse = (data) => {
     const user = userResponse(data);
     return {
-        technicien_id: data.id,
+        Technicien_id: data.id,
         ...user,
         dispo: data.dispo,
         grade: data.grade,
@@ -20,4 +20,22 @@ const technicienResponse = (data) => {
     };
 };
 
-export { technicienResponse };
+const ChefResponse = (data) => {
+    const user = userResponse(data);
+    return {
+        Chef_id: data.id,
+        ...user,
+        grade: data.grade,
+        SuccurcalId: data.SuccurcalId
+    };
+};
+
+const adminResponse = (data) => {
+    const user = userResponse(data);
+    return {
+        Admin_id: data.id,
+        ...user
+    };
+};
+
+export { technicienResponse, ChefResponse, adminResponse };

@@ -37,9 +37,28 @@ UserModel.client = UserModel.belongsTo(ClientModel, {
 AdminModel.user = AdminModel.hasOne(UserModel, {
     foreignKey: "actor_id",
     constraints: false,
+
     scope: { role: "admin" }
 });
 UserModel.admin = UserModel.belongsTo(AdminModel, {
+    foreignKey: "actor_id",
+    constraints: false
+});
+
+/**
+ * @models {ChefModel} , {UserModel}
+ * @type one to one association
+ * @desc store association on property user inside object ChefModel
+ * @access private
+ */
+
+ChefModel.user = ChefModel.hasOne(UserModel, {
+    foreignKey: "actor_id",
+    constraints: false,
+    scope: { role: "chef" }
+});
+
+UserModel.Chef = UserModel.belongsTo(ChefModel, {
     foreignKey: "actor_id",
     constraints: false
 });
@@ -54,28 +73,9 @@ UserModel.admin = UserModel.belongsTo(AdminModel, {
 TechnicienModel.user = TechnicienModel.hasOne(UserModel, {
     foreignKey: "actor_id",
     constraints: false,
-    onDelete: "cascade",
     scope: { role: "technicien" }
 });
 UserModel.technicien = UserModel.belongsTo(TechnicienModel, {
-    foreignKey: "actor_id",
-    onDelete: "cascade",
-    constraints: false
-});
-
-/**
- * @models {ChefModel} , {UserModel}
- * @type one to one association
- * @desc store association on property user inside object ChefModel
- * @access private
- */
-
-ChefModel.user = ChefModel.hasOne(UserModel, {
-    foreignKey: "actor_id",
-    constraints: false,
-    scope: { role: "Chef" }
-});
-UserModel.Chef = UserModel.belongsTo(ChefModel, {
     foreignKey: "actor_id",
     constraints: false
 });
