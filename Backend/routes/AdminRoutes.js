@@ -17,7 +17,7 @@ const router = Router();
  * @access private
  */
 
-router.get("/", auth, getAllAdmin);
+router.get("/", getAllAdmin);
 
 /**
  * @GET

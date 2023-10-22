@@ -1,30 +1,50 @@
 import asynchandler from "express-async-handler";
 import { ClientEntrModel, UserModel } from "../models/index.js";
-import { validator, UserSchema, EntrepriseSchema } from "../validators/JoiSchemas.js";
+import {
+    validator,
+    UserSchema,
+    EntrepriseSchema
+} from "../validators/JoiSchemas.js";
 import { generateJwt } from "../utils/generateToken.js";
 
 /**
- * @desc Get all entreprise
+ * @desc Get all entreprises
  * @route GET /entreprise
- * @access public
+ * @access private
  */
 
-const allCompany = asynchandler(async (req, res) => {
-    const clientEntrprise = await UserModel.findAll({
-        where: { role: "entreprise" },
-        include: [ClientEntrModel]
+const getAllEntreprises = asynchandler(async (req, res) => {
+    const clientEntrprise = await clientEntrprise.findAll({
+        include: UserModel
     });
-    if (!clientEntrprise) throw new Error("No company Found");
+    res.status(200).json(clientEntrprise);
+});
+
+/**
+ * @desc Get one entreprise
+ * @route GET /entreprise
+ * @access private
+ */
+
+const getOneEntreprises = asynchandler(async (req, res) => {
+    const { id } = req.params;
+    const clientEntrprise = await clientEntrprise.findByPk(id, {
+        include: UserModel
+    });
+
+    if (!clientEntrprise) {
+        throw new Error("clientEntrprise not found");
+    }
     res.status(200).json(clientEntrprise);
 });
 
 /**
  * @desc Get all entreprise
- * @route GET /entreprise
+ * @route Post /entreprise
  * @access public
  */
 
-const createCompany = asynchandler(async (req, res) => {
+const createClientEmployee = asynchandler(async (req, res) => {
     const {
         first_name,
         last_name,
@@ -36,7 +56,7 @@ const createCompany = asynchandler(async (req, res) => {
 
     const entreprise = {
         entreprise_id
-    }
+    };
     const user = {
         first_name,
         last_name,
@@ -47,7 +67,6 @@ const createCompany = asynchandler(async (req, res) => {
 
     validator(UserSchema, user);
     validator(EntrepriseSchema, entreprise);
-
 
     const Client = await ClientEntrModel.create(
         {
@@ -80,4 +99,4 @@ const createCompany = asynchandler(async (req, res) => {
  * @access public
  */
 
-export { allCompany, createCompany };
+export { getAllEntreprises, getOneEntreprises };

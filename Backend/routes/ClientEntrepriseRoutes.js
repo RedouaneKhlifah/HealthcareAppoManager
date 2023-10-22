@@ -1,13 +1,13 @@
 import express from "express";
 import {
-    allCompany,
-    createCompany
+    getAllEntreprises,
+    getOneEntreprises
 } from "../controllers/ClientEntrepriseController.js";
 
 const router = express.Router();
 
-router.get("/", allCompany);
+router.get("/", getAllEntreprises);
 
-router.post("/register", createCompany);
+router.get("/", getOneEntreprises);
 
 export default router;

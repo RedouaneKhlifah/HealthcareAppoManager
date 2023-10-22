@@ -1,3 +1,5 @@
+// file that costumize the responses
+
 const userResponse = (data) => {
     return {
         user_id: data.user.id,

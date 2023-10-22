@@ -1,54 +1,70 @@
 import asynchandler from "express-async-handler";
-import {ClientModel, UserModel} from "../models/index.js";
+import { ClientModel, UserModel } from "../models/index.js";
 import { validator, UserSchema } from "../validators/JoiSchemas.js";
 import { generateJwt } from "../utils/generateToken.js";
 
-
 /**
  * @desc Get all client
  * @route GET /client
- * @access public
+ * @access private
  */
 
-const allClient = asynchandler( async(req, res) => {
-    const client = await UserModel.findAll({where: {role : 'client'}, include : [ClientModel]});
-    if (!client) throw new Error("No client Found");
-    res.status(200).json(client);
-})
-
-/**
- * @desc Get all client
- * @route GET /client
- * @access public
- */
-
-const createClient = asynchandler(async (req, res) => {
-    // check if inputes are valid
-    validator(UserSchema, req.body);
-
-    let { first_name, last_name, email, password, profile_image } = req.body;
-
-    const newUser = await UserModel.create({
-        first_name: first_name.customTrim(),
-        last_name: last_name.customTrim(),
-        email: email,
-        password: password,
-        profile_image: profile_image,
-        client : {}
-    }, {    
-        include : [UserModel.client]
+const getAllClients = asynchandler(async (req, res) => {
+    const clients = await ClientModel.findAll({
+        include: UserModel
     });
-    
-    if (!newUser) throw new Error("Can't create user for some reason");
-    newUser.token = generateJwt(res, newUser.id, newUser.role);
-    res.status(201).json({token : newUser.token});
+    res.status(200).json(clients);
 });
 
 /**
- * @desc ....
- * @route ....
+ * @desc Get one client
+ * @route GET /client
+ * @access private
+ */
+
+const getOneClient = asynchandler(async (req, res) => {
+    const { id } = req.params;
+    const client = await ClientModel.findByPk(id, {
+        include: UserModel
+    });
+
+    if (!client) {
+        throw new Error("client not found");
+    }
+    res.status(200).json(client);
+});
+
+/**
+ * @desc register new client
+ * @route GET /client
  * @access public
  */
 
+const register = asynchandler(async (req, res) => {
+    const { first_name, last_name, email, profile_image, password } = req.body;
 
-export {allClient, createClient};
+    const user = { first_name, last_name, email, profile_image, password };
+    validator(UserSchema, user);
+
+    const client = await ClientModel.create(
+        {
+            client: {},
+            user: {
+                first_name: first_name.customTrim(),
+                last_name: last_name.customTrim(),
+                email: email,
+                password: password,
+                profile_image: profile_image
+            }
+        },
+        {
+            include: [ClientModel.user]
+        }
+    );
+
+    generateJwt(res, client.id, client.user.role);
+
+    res.status(201).json(client);
+});
+
+export { getAllClients, getOneClient, register };

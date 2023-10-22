@@ -7,7 +7,8 @@ import {
     TechnicienModel,
     ChefModel,
     SuccurcalModel,
-    ClientEntrModel
+    ClientEntrModel,
+    SuperAdminModel
 } from "./index.js";
 
 /**
@@ -23,6 +24,22 @@ ClientModel.user = ClientModel.hasOne(UserModel, {
     scope: { role: "client" }
 });
 UserModel.client = UserModel.belongsTo(ClientModel, {
+    foreignKey: "actor_id",
+    constraints: false
+});
+
+/**
+ * @models {ClientModel} , {UserModel}
+ * @type one to one association
+ * @desc store association on property user inside object clientModel
+ * @access private
+ */
+SuperAdminModel.user = SuperAdminModel.hasOne(UserModel, {
+    foreignKey: "actor_id",
+    constraints: false,
+    scope: { role: "superAdmin" }
+});
+UserModel.SuperAdminModel = UserModel.belongsTo(ClientModel, {
     foreignKey: "actor_id",
     constraints: false
 });

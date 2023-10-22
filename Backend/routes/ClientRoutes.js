@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { allClient, createClient } from "../controllers/ClientController.js";
+import {
+    getAllClients,
+    getOneClient,
+    register
+} from "../controllers/ClientController.js";
+import { auth } from "../middleware/AuthMiddleware.js";
+import { verifyRole } from "../middleware/verifyRole.js";
+import ROLE_LIST from "../config/Role_list.js";
 
 const router = Router();
 
@@ -9,13 +16,31 @@ const router = Router();
  * @access private
  */
 
-router.get("/", allClient);
+router.get(
+    "/",
+    auth,
+    verifyRole([ROLE_LIST.admin, ROLE_LIST.superadmin]),
+    getAllClients
+);
+
+/**
+ * @GET
+ * @desc // get one client
+ * @access private
+ */
+
+router.get(
+    "/:id",
+    auth,
+    verifyRole([ROLE_LIST.admin, ROLE_LIST.superadmin]),
+    getOneClient
+);
 
 /**
  * @POST
  * @desc // Create a client
- * @access private
+ * @access public
  */
-router.post("/", createClient);
+router.post("/register", register);
 
 export default router;
